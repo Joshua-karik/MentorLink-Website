@@ -4,7 +4,7 @@ body {
     scroll-behavior: smooth;
 }
 
-/* Custom scrollbar for better aesthetics across browsers */
+
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -20,31 +20,31 @@ body {
     background: #555;
 }
 
-/* Testimonial carousel specific styles */
+
 .carousel-container {
-    /* Hides the scrollbar but allows programmatic scrolling */
+    
     overflow-x: hidden;
-    /* Ensures items snap into place when scrolled */
+    
     scroll-snap-type: x mandatory;
-    /* Smooth scrolling on iOS devices */
+    
     -webkit-overflow-scrolling: touch;
-    /* Cursor indicates it's a draggable area, though dragging is disabled by JS now */
+    
     cursor: grab;
 }
 .carousel-item {
-    /* Ensures each item takes full width and snaps to start */
+    
     scroll-snap-align: start;
-    flex: 0 0 100%; /* Each item takes full width of the container */
+    flex: 0 0 100%; 
 }
-/* Visual feedback when dragging was enabled (kept for consistency) */
+
 .carousel-container.dragging {
     cursor: grabbing;
 }
 
-/* Stylish feature: Underline hover effect for navigation links */
+
 .nav-link {
     position: relative;
-    /* Prevents text from shifting during underline animation */
+    
     white-space: nowrap;
 }
 
@@ -53,18 +53,18 @@ body {
     position: absolute;
     width: 0;
     height: 2px;
-    bottom: -4px; /* Position below the text */
-    left: 50%; /* Start from the center */
-    background-color: #3b82f6; /* Tailwind blue-500 */
+    bottom: -4px; 
+    left: 50%; 
+    background-color: #3b82f6; 
     transition: width 0.3s ease-out, left 0.3s ease-out;
 }
 
 .nav-link:hover::after {
-    width: 100%; /* Expand to full width */
-    left: 0; /* Align to the left edge */
+    width: 100%; 
+    left: 0; 
 }
 
-/* Stylish feature: Pulsating animation for primary Call-to-Action buttons */
+
 .cta-button-animation {
     animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
@@ -74,32 +74,32 @@ body {
         transform: scale(1);
     }
     50% {
-        transform: scale(1.05); /* Slightly enlarge */
+        transform: scale(1.05); 
     }
 }
 
-/* Stylish feature: Smooth accordion transition for FAQ section */
+
 .faq-answer {
-    /* Animate max-height and padding for smooth open/close */
+    
     transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
 
 .faq-answer p {
-    padding: 1rem; /* Apply padding to the paragraph inside when visible */
-    /* Ensure padding is applied only when max-height allows */
+    padding: 1rem; 
+    
 }
 
 .faq-question i {
-    /* Animate the rotation of the plus/minus icon */
+    
     transition: transform 0.3s ease-in-out;
 }
 
-/* Rotate the icon when the accordion is expanded */
+
 .faq-question[aria-expanded="true"] i {
-    transform: rotate(45deg); /* Rotates a plus into an 'x' or minus */
+    transform: rotate(45deg); 
 }
 
-/* Ensures rounded corners are maintained on the top of the FAQ item when open */
+
 .faq-item.open .faq-question {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
