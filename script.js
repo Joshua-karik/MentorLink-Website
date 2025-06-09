@@ -39,132 +39,145 @@ document.addEventListener('DOMContentLoaded', () => {
             link.classList.add('text-gray-700'); 
             if (link.dataset.section === currentSection) {
                 link.classList.add('text-blue-600', 'font-bold', 'bg-blue-100'); 
-                link.classList.remove('text-gray-700'); 
             }
         });
     };
 
-    
-    highlightNavLink();
     window.addEventListener('scroll', highlightNavLink);
+    highlightNavLink(); 
 
     
-    const learnMoreButtons = document.querySelectorAll('.learn-more-btn');
-
-    learnMoreButtons.forEach(button => {
+    document.querySelectorAll('.learn-more-btn').forEach(button => {
         button.addEventListener('click', function() {
-            const targetId = this.dataset.target; 
-           
-            document.querySelectorAll('#dynamic-content > div').forEach(page => {
-                
-                if (page.id === 'how-it-works-page' || page.id === 'services-page' || page.id === 'deep-dive-page') {
-                    page.classList.add('hidden');
+            const targetPageId = this.dataset.target;
+            document.querySelectorAll('#dynamic-content > div').forEach(div => {
+                if (div.id !== targetPageId) {
+                    div.classList.add('hidden');
                 }
             });
-
-            
-            document.getElementById(targetId).classList.remove('hidden');
-
-            
-            document.querySelectorAll('.interactive-card').forEach(card => {
-                card.classList.add('hidden');
-            });
+            document.getElementById(targetPageId).classList.remove('hidden');
         });
     });
 
-    s
     document.querySelectorAll('.back-to-dynamic-content').forEach(button => {
         button.addEventListener('click', function() {
-            
-            document.querySelectorAll('#dynamic-content > div').forEach(page => {
-                if (page.id === 'how-it-works-page' || page.id === 'services-page' || page.id === 'deep-dive-page') {
-                    page.classList.add('hidden');
+            document.querySelectorAll('#dynamic-content > div').forEach(div => {
+                if (div.id !== 'services-page' && div.id !== 'deep-dive-page') {
+                    div.classList.remove('hidden');
+                } else {
+                    div.classList.add('hidden');
                 }
-            });
-           
-            document.querySelectorAll('.interactive-card').forEach(card => {
-                card.classList.remove('hidden');
             });
         });
     });
 
     
     const carousel = document.getElementById('testimonial-carousel');
-    const prevBtn = document.getElementById('prev-testimonial');
-    const nextBtn = document.getElementById('next-testimonial');
+    const prevButton = document.getElementById('prev-testimonial');
+    const nextButton = document.getElementById('next-testimonial');
+    let currentIndex = 0;
 
-    
-    const scrollCarouselByItem = (direction) => {
-     
-        const item = carousel.querySelector('.carousel-item');
-        if (!item) return; 
-        const itemWidth = item.offsetWidth +
-                          parseInt(getComputedStyle(item).marginLeft) +
-                          parseInt(getComputedStyle(item).marginRight);
+    const itemsPerView = window.innerWidth >= 768 ? 2 : 1; 
+    const totalItems = carousel.children.length;
 
-        
-        carousel.scrollBy({
-            left: direction * itemWidth,
-            behavior: 'smooth' 
+    const updateCarousel = () => {
+        const itemWidth = carousel.children[0].offsetWidth + (window.innerWidth >= 768 ? 16 : 0); // Include gap
+        carousel.scrollTo({
+            left: currentIndex * itemWidth,
+            behavior: 'smooth'
         });
     };
 
-    
-    prevBtn.addEventListener('click', () => scrollCarouselByItem(-1)); 
-    nextBtn.addEventListener('click', () => scrollCarouselByItem(1)); 
+    prevButton.addEventListener('click', () => {
+        currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalItems - itemsPerView;
+        updateCarousel();
+    });
+
+    nextButton.addEventListener('click', () => {
+        currentIndex = (currentIndex < totalItems - itemsPerView) ? currentIndex + 1 : 0;
+        updateCarousel();
+    });
+
+    window.addEventListener('resize', () => {
+        itemsPerView = window.innerWidth >= 768 ? 2 : 1;
+        updateCarousel();
+    });
 
     
-    const exploreButton = document.getElementById('explore-button');
-    const exploreContent = document.getElementById('explore-content');
+    let isDragging = false;
+    let startPos = 0;
+    let scrollLeft = 0;
 
-    exploreButton.addEventListener('click', () => {
-        exploreContent.classList.toggle('hidden'); 
-        if (!exploreContent.classList.contains('hidden')) {
-            exploreButton.textContent = 'Hide Details';
-        } else {
-            exploreButton.textContent = 'Start Exploring Now!';
+    carousel.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        carousel.classList.add('dragging');
+        startPos = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+        isDragging = false;
+        carousel.classList.remove('dragging');
+    });
+
+    carousel.addEventListener('mouseup', () => {
+        isDragging = false;
+        carousel.classList.remove('dragging');
+    });
+
+    carousel.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startPos) * 2; 
+        carousel.scrollLeft = scrollLeft - walk;
+    });
+
+    
+    document.querySelector('#home-cta').addEventListener('click', function(e) {
+        e.preventDefault();
+        const howItWorksSection = document.getElementById('how-it-works');
+        if (howItWorksSection) {
+            howItWorksSection.scrollIntoView({ behavior: 'smooth' });
         }
     });
+
 
     
     document.querySelectorAll('.faq-question').forEach(button => {
         button.addEventListener('click', () => {
-            const faqItem = button.closest('.faq-item'); 
-            const answer = faqItem.querySelector('.faq-answer'); 
-            const icon = button.querySelector('i'); 
-
-            
-            faqItem.classList.toggle('open');
+            const faqItem = button.closest('.faq-item');
+            const faqAnswer = faqItem.querySelector('.faq-answer');
+            const icon = button.querySelector('i');
 
             if (faqItem.classList.contains('open')) {
-                
-                answer.style.maxHeight = answer.scrollHeight + 'px';
-                answer.style.padding = '1rem'; 
-                icon.classList.remove('fa-plus');
-                icon.classList.add('fa-minus');
-                button.setAttribute('aria-expanded', 'true'); 
-            } else {
-               
-                answer.style.maxHeight = '0';
-                answer.style.padding = '0';
+                faqItem.classList.remove('open');
+                faqAnswer.style.maxHeight = '0';
+                faqAnswer.style.padding = '0';
                 icon.classList.remove('fa-minus');
                 icon.classList.add('fa-plus');
-                button.setAttribute('aria-expanded', 'false'); 
-            }
+                button.setAttribute('aria-expanded', 'false');
+            } else {
+                // Close all other open FAQs
+                document.querySelectorAll('.faq-item.open').forEach(openFaqItem => {
+                    const openFaqAnswer = openFaqItem.querySelector('.faq-answer');
+                    const openFaqIcon = openFaqItem.querySelector('.faq-question i');
+                    openFaqItem.classList.remove('open');
+                    openFaqAnswer.style.maxHeight = '0';
+                    openFaqAnswer.style.padding = '0';
+                    openFaqIcon.classList.remove('fa-minus');
+                    openFaqIcon.classList.add('fa-plus');
+                    openFaqItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                });
 
-           
-            document.querySelectorAll('.faq-item').forEach(item => {
-                if (item !== faqItem && item.classList.contains('open')) {
-                    const otherAnswer = item.querySelector('.faq-answer');
-                    const otherIcon = item.querySelector('i');
-                    item.classList.remove('open');
-                    otherAnswer.style.maxHeight = '0';
-                    otherAnswer.style.padding = '0';
-                    otherIcon.classList.remove('fa-minus');
-                    otherIcon.classList.add('fa-plus');
-                    item.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-                }
-            });
+                // Open the clicked FAQ
+                faqItem.classList.add('open');
+                faqAnswer.style.maxHeight = faqAnswer.scrollHeight + 'px';
+                faqAnswer.style.padding = '1rem'; 
+                icon.classList.remove('fa-plus');
+                icon.classList.add('fa-minus');
+                button.setAttribute('aria-expanded', 'true');
+            }
         });
     });
 
@@ -176,8 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
        
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const address = document.getElementById('address').value;
+        const subject = document.getElementById('subject').value; 
         const message = document.getElementById('message').value;
 
         
@@ -193,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setTimeout(() => {
             successMessage.remove();
-        }, 5000);
+        }, 5000); 
     });
+
 });
