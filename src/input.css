@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind components;
+<<<<<<< HEAD
 @tailwind utilities; 
 
 /* Custom styles for the Inter font and smooth scrolling */
@@ -143,3 +144,6 @@ body {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
+=======
+@tailwind utilities;
+>>>>>>> 50791624ea200d0717cf0f6d00e8cc40a54e63ee
